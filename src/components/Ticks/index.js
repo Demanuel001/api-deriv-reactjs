@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import DerivAPIBasic from '@deriv/deriv-api/dist/DerivAPIBasic';
-import './deriv-style.css';
+import './style.css';
 
-const DerivApiExample = () => {
+const Ticks = () => {
   const app_id = 1089; // ID TESTE
   const connection = new WebSocket(`wss://ws.binaryws.com/websockets/v3?app_id=${app_id}`);
   const api = new DerivAPIBasic({ connection });
@@ -10,6 +10,9 @@ const DerivApiExample = () => {
   const tickStream = () => api.subscribe({ ticks: 'R_100' }); // somente o simbolo informado por parametro
 
   const [ticksData, setTicksData] = useState([]);
+
+  const listarKeys = ['symbol', 'id', 'bid', 'epoch', 'quote'];
+  // {"ask":5922.01,"bid":5920.01,"epoch":1685326390,"id":"734cbe08-4c57-9419-4830-96fed4bb9257","pip_size":2,"quote":5921.01,"symbol":"R_100"}
 
   const tickResponse = async (res) => {
     const data = JSON.parse(res.data);
@@ -47,19 +50,24 @@ const DerivApiExample = () => {
   }, []);
 
   return (
-    <div className="container">
-        <h1>Exemplo de Consumo da deriv-api</h1>
-        <div className="buttons-container">
-            <button id="ticks">Gerar Ticks</button>
-            <button id="parar-ticks">Parar</button>
+    <div className="container-ticks">
+        <h1 className='titulo-ticks'>Listar Ticks</h1>
+        <h3 className='subtitulo-ticks'>Um tick é uma medida de movimento mínimo para cima ou para baixo no preço de uma mercadoria comercializável.</h3>
+        <div className="buttons-container-ticks">
+            <button className='button-ticks' id="ticks">Gerar Ticks</button>
+            <button className='button-ticks' id="parar-ticks">Parar Ticks</button>
         </div>
         <ul className="ticks-list">
             {ticksData.map((tick, index) => (
-                <li key={index}>{JSON.stringify(tick)}</li>
+              <li className='list-ticks' key={index}>
+                {listarKeys.map((key) => (
+                  <span className='label-tick' key={key}>{`${key}: ${tick[key]} `}</span>
+                ))}
+              </li>
             ))}
         </ul>
     </div>
   );
 };
 
-export default DerivApiExample;
+export default Ticks;
